@@ -7,15 +7,15 @@ import requests                 # ConnectionErrors, rerunning the program.
 import time     # Timer for running the bot every set amount of time
 import urllib   # Access internet and make network requests
 
-r = praw.Reddit(
+r = praw.Reddit('bot1',
     user_agent='EVE: Online Killmail Reader v2.0.48'
-               'Created by /u/Valestrum '
+               'Originally Created by /u/Valestrum'
                'Designed to help users get killmail info without clicking '
                'links and to post threads on kills detected to be worth '
                '20 billion or more ISK.')
 username, password = [line.rstrip('\n') for line in open('user_info.txt')]
-r.login(username, password)
-subreddit = r.get_subreddit("eve")
+#r.login(username, password)
+subreddit = r.subreddit("test")
 loop_count = 0
 startswith_vowel = lambda string: string.lower()[0] in 'aeiou'
 
@@ -66,7 +66,7 @@ def analyze_kills(new_ids):
     '''
     thread_info = []
     for new_id in new_ids:
-        url = 'https://zkillboard.com' + new_id
+        url = 'https://zkillboard.com' + new_id 
         soup = BeautifulSoup(urllib.urlopen(url).read(), "html.parser")
     
         isk_worth = soup.find("strong", class_="item_dropped").get_text()
@@ -121,7 +121,7 @@ def create_threads(thread_info):
         x += 1
     for thread in range(len(titles)):
         title, link = titles[thread], links[thread]
-        r.submit(subreddit, title, url=link, captcha=None)
+        subreddit.submit(title, url=link)
 
 
 def condense_value(num, suffix='ISK'):
@@ -199,8 +199,8 @@ def read_killmail(killmails):
         v_rigging_text = soup.find_all('ul', class_="dropdown-menu")[3]
         v_rigging_text = v_rigging_text.find('a').get_text()
         v_rigging_link = soup.find_all('ul', class_="dropdown-menu")[3]
-        v_rigging_link = v_rigging_link.find_all(
-            'a', href=re.compile('/o.smium.org/loadout/'))[0]['href']
+        #v_rigging_link = v_rigging_link.find_all(
+        #       'a', href=re.compile('/o.smium.org/loadout/'))[0]['href']
 
         kb_ship_type = soup.find_all('tr', class_="attacker")[0]
         kb_ship_type = kb_ship_type.find_all(
@@ -247,8 +247,8 @@ def read_killmail(killmails):
             reply_data.append(people_data)
         reply_data.append(
             "\n\n>Value dropped: {0}\n\n>Vale destroyed: {1}\n\n>Total value: "
-            "{2}\n\n>[{3}'s {4}]({5})\n\n".format(isk_dropped, isk_destroyed,
-                isk_total, v_pilot_name, v_rigging_text, v_rigging_link)
+            "{2}\n\n>[{3}'s {4}]\n\n".format(isk_dropped, isk_destroyed,
+                isk_total, v_pilot_name, v_rigging_text)
                 + ('-'*50))
     reply_data = ('\n\n'.join(reply_data))
 
@@ -284,7 +284,7 @@ def post_replies():
         existing = cache.read().splitlines()
 
     # Part 2
-    comments = subreddit.get_comments(limit=150)
+    comments = subreddit.comments(limit=150)
 
     with open('cache.txt', 'a+') as cache:
         for comment in comments:
