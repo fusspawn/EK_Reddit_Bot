@@ -253,8 +253,8 @@ def read_killmail(killmails):
     reply_data = ('\n\n'.join(reply_data))
 
     # Part 4
-    msg_bot_link = 'http://www.reddit.com/message/compose?to=Killmail_Bot'
-    github_link = 'https://github.com/ArnoldM904/EK_Reddit_Bot'
+    msg_bot_link = 'http://www.reddit.com/message/compose?to=KillsWithFrills'
+    github_link = 'https://github.com/fusspawn/EK_Reddit_Bot'
 
     return(
         "Hi, I am a killmail reader bot. "
@@ -262,7 +262,7 @@ def read_killmail(killmails):
         reply_data +
         "\n\n^^This ^^bot ^^is ^^open ^^source ^^& ^^in ^^active "
         "^^development! ^^Please ^^feel ^^free ^^to ^^contribute: ^^["
-        "Suggestions]({0}) ^^| ^^[Code]({1})").format(msg_bot_link, github_link)
+        "Suggestions]({0}) ^^| ^^[Code]({1}) ^^originally ^^by ^^/u/ArnoldM904 ^^updated ^^by ^^/u/Fusspawn").format(msg_bot_link, github_link)
 
 def post_replies():
     ''' 
