@@ -8,12 +8,12 @@ import time     # Timer for running the bot every set amount of time
 import urllib   # Access internet and make network requests
 
 r = praw.Reddit('bot1',
-    user_agent='EVE: Online Killmail Reader v3.0.0'
-               'Originally Created by /u/Valestrum'
-               'Updated by /u/Fusspawn'
-               'Designed to help users get killmail info without clicking '
-               'links and to post threads on kills detected to be worth '
-               '20 billion or more ISK.')
+                user_agent='EVE: Online Killmail Reader v3.0.0'
+                'Originally Created by /u/Valestrum'
+                'Updated by /u/Fusspawn'
+                'Designed to help users get killmail info without clicking '
+                'links and to post threads on kills detected to be worth '
+                '20 billion or more ISK.')
 
 subreddit = r.subreddit("eve")
 loop_count = 0
@@ -35,8 +35,8 @@ def find_kills():
     for x in range(num_of_killmails):
         # Only use every 3rd killmail due to each link being stated 3 times.
         if x % 3 == 0:
-            kill_id = soup.find_all('a', 
-                        href=re.compile('/kill/'))[x]['href'][:-9]
+            kill_id = soup.find_all('a',
+                                    href=re.compile('/kill/'))[x]['href'][:-9]
             kill_ids.append(kill_id)
     return(kill_ids)
 
@@ -66,9 +66,9 @@ def analyze_kills(new_ids):
     '''
     thread_info = []
     for new_id in new_ids:
-        url = 'https://zkillboard.com' + new_id 
+        url = 'https://zkillboard.com' + new_id
         soup = BeautifulSoup(urllib.urlopen(url).read(), "html.parser")
-    
+
         isk_worth = soup.find("strong", class_="item_dropped").get_text()
         isk_worth = condense_value(int(isk_worth[:-7].replace(',', '')))
 
@@ -78,7 +78,7 @@ def analyze_kills(new_ids):
                 print("New 20b+ kill found! Kill #: " + new_id)
                 cache.write(new_id + '\n')
             #time = soup.find('td', class_="info_kill_dttm").get_text()[11:]
-            
+
             # v = victim
             v_pilot = soup.find_all(
                 'a', href=re.compile('/character/'))[1].get_text()
@@ -100,7 +100,7 @@ def analyze_kills(new_ids):
                 title = "[zKill] {0} {1} owned by {2} of {3} has "\
                         "been destroyed.".format(
                             isk_worth, v_ship, v_pilot, v_corp)
-                            
+
             thread_info.append(title)
             thread_info.append(url)
     return(thread_info)
@@ -162,7 +162,7 @@ def read_killmail(killmails):
         isk_dropped, isk_destroyed, isk_total = [
             condense_value(int(value[:-7].replace(',', ''))) for
             value in [isk_dropped, isk_destroyed, isk_total]
-            ]
+        ]
 
         system = soup.find_all('a', href=re.compile('/system/'))
         system = system[1].get_text()  # Ex: Iralaja
@@ -171,7 +171,7 @@ def read_killmail(killmails):
         # Ex: '44' out of "45 Involved", excluded 1 being kb
         pilot_class = "hidden-md hidden-xs"
         other_pilots = int(str(
-            soup.find("th", class_=pilot_class).get_text())[:-9])-1
+            soup.find("th", class_=pilot_class).get_text())[:-9]) - 1
 
         # v = victim, kb = pilot firing killing blow
         info_class = "table table-condensed"
@@ -191,7 +191,7 @@ def read_killmail(killmails):
 
         v_ship_type = ''.join(
             (soup.find("td", style="width: 100%").get_text()).split()
-            ) # Ex: Leviathan(Titan)
+        )  # Ex: Leviathan(Titan)
         if startswith_vowel(v_ship_type):
             v_ship_type = 'n ' + v_ship_type
         else:
@@ -199,12 +199,12 @@ def read_killmail(killmails):
         v_rigging_text = soup.find_all('ul', class_="dropdown-menu")[3]
         v_rigging_text = v_rigging_text.find('a').get_text()
         v_rigging_link = soup.find_all('ul', class_="dropdown-menu")[3]
-        #v_rigging_link = v_rigging_link.find_all(
+        # v_rigging_link = v_rigging_link.find_all(
         #       'a', href=re.compile('/o.smium.org/loadout/'))[0]['href']
 
         kb_ship_type = soup.find_all('tr', class_="attacker")[0]
         kb_ship_type = kb_ship_type.find_all(
-            'a', href=re.compile('/ship/'))[0].img.get('alt') # Ex: Nyx
+            'a', href=re.compile('/ship/'))[0].img.get('alt')  # Ex: Nyx
         if startswith_vowel(kb_ship_type):
             kb_ship_type = 'n ' + kb_ship_type
         else:
@@ -228,8 +228,8 @@ def read_killmail(killmails):
                 "\n\n>On {0} a{1}s piloted by {2} of ({3} | {4}) was destroyed "
                 "in system {5} by {6} of ({7} | {8}) flying a{9} along with "
                 "{10} others.".format(date, v_ship_type, v_pilot_name, v_corp,
-                    v_alliance, system, kb_pilot_name, kb_corp,
-                    kb_alliance, kb_ship_type, other_pilots))
+                                      v_alliance, system, kb_pilot_name, kb_corp,
+                                      kb_alliance, kb_ship_type, other_pilots))
         else:
             kb_pilot_name = soup.find_all('td', style="text-align: center;")[0]
             kb_pilot_name = kb_pilot_name.find_all(
@@ -238,8 +238,8 @@ def read_killmail(killmails):
                 "\n\n>On {0} a{1}s piloted by {2} of ({3} | {4}) was destroyed "
                 "in system {5} by {6}s flying a{7} along with {8} "
                 "other".format(date, v_ship_type, v_pilot_name, v_corp,
-                    v_alliance, system, kb_pilot_name,
-                    kb_ship_type, other_pilots))
+                               v_alliance, system, kb_pilot_name,
+                               kb_ship_type, other_pilots))
             if int(other_pilots) == 1:
                 people_data += "."
             else:
@@ -247,9 +247,9 @@ def read_killmail(killmails):
             reply_data.append(people_data)
         reply_data.append(
             "\n\n>Value dropped: {0}\n\n>Vale destroyed: {1}\n\n>Total value: "
-            "{2}\n\n>[{3}'s {4}]\n\n".format(isk_dropped, isk_destroyed,
-                isk_total, v_pilot_name, v_rigging_text)
-                + ('-'*50))
+            "{2}\n\n>\n\n".format(isk_dropped, isk_destroyed,
+                                             isk_total)
+            + ('-' * 50))
     reply_data = ('\n\n'.join(reply_data))
 
     # Part 4
@@ -263,6 +263,7 @@ def read_killmail(killmails):
         "\n\n^^This ^^bot ^^is ^^open ^^source ^^& ^^in ^^active "
         "^^development! ^^Please ^^feel ^^free ^^to ^^contribute: ^^["
         "Suggestions]({0}) ^^| ^^[Code]({1}) ^^originally ^^by ^^/u/Valestrum ^^updated ^^by ^^/u/Fusspawn").format(msg_bot_link, github_link)
+
 
 def post_replies():
     ''' 
@@ -316,6 +317,7 @@ def post_replies():
             report = read_killmail(mails)
             # Part 7
             comment.reply(report)
+
 
 def post_threads():
     '''
