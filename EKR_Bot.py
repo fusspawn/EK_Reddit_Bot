@@ -8,14 +8,14 @@ import time     # Timer for running the bot every set amount of time
 import urllib   # Access internet and make network requests
 
 r = praw.Reddit('bot1',
-    user_agent='EVE: Online Killmail Reader v2.0.48'
+    user_agent='EVE: Online Killmail Reader v3.0.0'
                'Originally Created by /u/Valestrum'
+               'Updated by /u/Fusspawn'
                'Designed to help users get killmail info without clicking '
                'links and to post threads on kills detected to be worth '
                '20 billion or more ISK.')
-username, password = [line.rstrip('\n') for line in open('user_info.txt')]
-#r.login(username, password)
-subreddit = r.subreddit("test")
+
+subreddit = r.subreddit("eve")
 loop_count = 0
 startswith_vowel = lambda string: string.lower()[0] in 'aeiou'
 
@@ -73,7 +73,7 @@ def analyze_kills(new_ids):
         isk_worth = condense_value(int(isk_worth[:-7].replace(',', '')))
 
         # Only record kills that are worth 20bil ISK or more.
-        if float(isk_worth[:-5]) > 19.99:
+        if float(isk_worth[:-5]) > 19.9:
             with open('recorded_kills.txt', 'a+') as cache:
                 print("New 20b+ kill found! Kill #: " + new_id)
                 cache.write(new_id + '\n')
@@ -92,12 +92,12 @@ def analyze_kills(new_ids):
             try:
                 v_alliance = soup.find_all(
                     'a', href=re.compile('/alliance/'))[1].get_text()
-                title = "[Kill Alert] {0} {1} {2} owned by {3} of {4} has "\
-                        "been destroyed.".format(
+                title = "[zKill] {1} {2} owned by {3} of {4} has "\
+                        "been destroyed by {0}.".format(
                             v_alliance, isk_worth, v_ship, v_pilot, v_corp)
             except IndexError:
                 v_alliance = "<No Alliance>"
-                title = "[Kill Alert] {0} {1} owned by {2} of {3} has "\
+                title = "[zKill] {0} {1} owned by {2} of {3} has "\
                         "been destroyed.".format(
                             isk_worth, v_ship, v_pilot, v_corp)
                             
@@ -262,7 +262,7 @@ def read_killmail(killmails):
         reply_data +
         "\n\n^^This ^^bot ^^is ^^open ^^source ^^& ^^in ^^active "
         "^^development! ^^Please ^^feel ^^free ^^to ^^contribute: ^^["
-        "Suggestions]({0}) ^^| ^^[Code]({1}) ^^originally ^^by ^^/u/ArnoldM904 ^^updated ^^by ^^/u/Fusspawn").format(msg_bot_link, github_link)
+        "Suggestions]({0}) ^^| ^^[Code]({1}) ^^originally ^^by ^^/u/Valestrum ^^updated ^^by ^^/u/Fusspawn").format(msg_bot_link, github_link)
 
 def post_replies():
     ''' 
@@ -336,4 +336,4 @@ while True:
         print(e)
     loop_count += 1
     print("Program loop #{0} completed successfully.".format(loop_count))
-    time.sleep(1200)
+    time.sleep(100)
